@@ -1,0 +1,36 @@
+@use 'react-responsive-tools' as *;
+@layer ui {
+  .Button {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: var(--secondary-bg);
+    cursor: pointer;
+    text-wrap: nowrap;
+    transition: border-color 0.25s;
+    &:hover {
+      border-color: var(--primary-color);
+    }
+
+    &:focus,
+    &:focus-visible {
+      outline: 4px auto -webkit-focus-ring-color;
+    }
+
+    @include for-lg{
+      font-size: 14px;
+    }
+    &.small{
+      padding: 0.4em 0.6em;
+    }
+    &.middle{
+      padding: 0.6em 0.8em;
+    }
+    &.large{
+      padding: 1em 1.2em;
+    }
+  }
+}

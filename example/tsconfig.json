@@ -1,0 +1,57 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "target": "es6",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "types": ["vite-plugin-svgr/client", "node"],
+    "paths": {
+      "api/*": ["./api/*"],
+      "assets/*": ["./assets/*"],
+      "main": ["./main"],
+      "ws": ["./ws"],
+      "components/*": ["./components/*"],
+      "contexts/*": ["./contexts/*"],
+      "modal/*": ["./components/Modal/*"],
+      "hooks/*": ["./hooks/*"],
+      "pages/*": ["./pages/*"],
+      "store/*": ["./store/*"],
+      "queries/*": ["./queries/*"],
+      "managers/*": ["./managers/*"],
+      "layouts/*": ["./layouts/*"],
+      "services/*": ["./services/*"],
+      "translation/*": ["./translation/*"],
+      "validation/*": ["./validation/*"],
+      "utils/*": ["./utils/*"],
+      "types/*": ["./types/*"]
+    },
+    "allowJs": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtension": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "sourceMap": true,
+  },
+  "include": [
+    "src",
+    "custom.d.ts",
+    "index.d.ts",
+    "vite-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
+}

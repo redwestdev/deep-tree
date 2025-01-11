@@ -1,0 +1,13 @@
+@layer components {
+  .OpenReportBtn {
+    border-radius: 8px;
+    &.simple {
+      background-color: #fff;
+      color: black;
+    }
+    &.advance{
+      background-color: black;
+      color: white;
+    }
+  }
+}

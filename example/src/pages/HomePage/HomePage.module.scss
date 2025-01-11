@@ -1,0 +1,11 @@
+@use 'react-responsive-tools' as *;
+
+@layer pages {
+  .HomePage {
+    font-size: 14px;
+    display: grid;
+    @include for-ltl {
+      font-size: 16px;
+    }
+  }
+}
