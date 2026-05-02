@@ -1,234 +1,339 @@
-# Base Deep Tree v1
+# Deep Tree Core
 
-## Introduction
+## Введение
 
-This document provides an overview of the project structure based on React.js.
+Deep Tree — файловая модульная архитектура UI-приложений, ориентированная на масштабируемость больших фронтенд-проектов.
 
-### Goals
+Архитектура основана на принципах [SOLID](https://en.wikipedia.org/wiki/SOLID), адаптированных для организации файлов фронтенд-проектов. Не привязана к конкретному фреймворку — применима к любому компонентному UI-стеку.
 
-- Solve the problem of a lack of a unified component structure
-- Reduce the number of files with a large number of lines
-- Organize the `components` folder for easy project scaling
-- Increase code readability in large projects
-- Facilitate project refactoring
-- Increase the flexibility of the project architecture
+> Эталонная реализация: [README.md](react.md) (React.js)
 
-## Basics
+## Цели
 
-The architecture is based on OOP principles. Knowledge of these practices will help to better utilize the potential of
-this architecture.
+- Установить единую структуру файлов в проекте
+- Улучшить читаемость и навигацию по коду
+- Разбивать большие файлы на понятные части
+- Снизить технический долг проекта
+- Повысить гибкость и переиспользование кода
+- Снизить порог входа для новых разработчиков
 
-Frontend — working with visual representation of information.
 
-## Data Types
 
-Always start with T (short for Type) and are written in PascalCase, for example, like this:
-**TReportDetail**
 
-## Component Classes
+## Сущности
 
-Visually any layout can be divided into three conditional categories:
+Сущность — это программная логическая единица.
 
-- **Pages (pages)**
-- **Sections (sections)**
-- **Elements (components)**
+Примеры видов сущностей:
+`component`, `style`, `image`, `logic`, `function`, `page`, `section`, `route`, `helper`, `config`, `type`, `api-client`, `translation` и тд.
 
-### Project Structure
+Сущность всегда отвечает за что-то одно. (принцип единой ответственности SOLID).
 
-The project is based on an architecture that mirrors the design and nesting of components, divided into pages, sections,
-and elements.
+> Некоторые сущности уникальны в одном экземпляре. Например: `config`, `theme`.
 
-### Component Hierarchy
+В архитектуре глубокого дерева сущности упорядочиваются в виде дерева,
+где каждая сущность имеет доступ к родительским и управляет своими дочерними сущностями.
 
-- **Pages**
-  - Page (pages)
-  - View (views)
-- **Sections**
-  - Modal (modals)
-  - SideBar (sidebars, mobile menus, navigation control elements)
-  - PopUp (popups)
-  - Aside (may not have navigation control elements)
-- **Elements**
-  - UI
-  - Component
+Любая сущность может быть как _отдельным файлом_, так и _группой файлов, объединённых папкой_.
 
-### Component Types
+### Составная сущность
 
-- **UI components**: Typically small UI components
-- **Business components**: Perform business logic
+Составная сущность — группа файлов, объединённых общей папкой. Внутри могут быть слои, файловые слои и любые вспомогательные файлы, необходимые для работы.
 
-### Project Structure
+#### Правила составной сущности
+- Имя папки — PascalCase.
+- Обязателен корневой `index`-файл; экспорт наружу — только через него.
+- Не вкладывать другие составные сущности того же уровня (только слои, файловые слои и одиночные сущности).
+- Структура внутри папки самодостаточна.
 
-1. The project is based on components that can be classified as `Pages`, `Sections`, `Components`.
-2. The project has a hierarchy: `Pages → Sections → Components` (pages contain sections, sections contain components).
-
-### Component Naming
-
-1. Components should be named in PascalCase format.
-2. Sections should have `_Section` suffixes (e.g., `HeaderSection`, `FooterSection`).
-3. Closed sections have the following suffixes:
-
-- Modals: `_Modal` (e.g., `AddUserModal`)
-- SideBar: `_Sidebar` (e.g., `FilterSidebar`)
-- Aside: `_Aside` (e.g., `MenuAside`)
-- Popups: `_PopUp` (e.g., `ProfilePopUp`)
-
-4. Pages have `_Page` suffixes (e.g., `MainPage`, `ContactUsPage`).
-5. Components may not have special suffixes.
-
-## Example Component Structure
-
-Any `tsx` component is a folder named after the component.
-The component contains several files:
-
-- `index.ts` - root file (**mandatory**)
-- `ComponentName.tsx` - component file, matches the folder name (**mandatory**)
-- `ComponentName.module.scss` - style file, if any
-- `ComponentName.types.ts` - types for the component
-- `ComponentName.validation.ts` - validation functions, if needed
-
-Example structure of the `ComponentName` component:
-
-```ts
-// JavaScript
-ComponentName
-|-- index.ts
-|-- ComponentName.tsx
-|-- ComponentName.module.scss
-|-- ComponentName.types.ts
-|-- ComponentName.validation.ts
-|-- images
-|   |-- banner.min.png
-|   |-- openIcon.svg
-|-- components
-|   |-- Title
-|   |-- SomeList
-|   |-- AddButton
-|-- sections
-|   |-- HeadSection
-|   |-- FootSection
-|-- modals
-|   |-- AddModal
-|   |-- ConfirmModal
-|-- types
-|   |-- TComponentNameStateType.ts
-|-- ui
-|   |-- ButtonUI
-|   |-- IconButton
-|-- hooks
-|   |-- useSort.ts
-|   |-- useFilter.ts
-|-- utils
-|   |-- getNextAvaliableItem.ts
-|   |-- getPrevAvaliableItem.ts
-|-- helpers
-|   |-- convertOneTypeToAnotherType.ts
-|-- api
-|   |-- index.ts
-|   |-- routes
-|       |-- getSomeThing.ts
-|       |-- putSomeThing.ts
+`index`-файл — только реэкспорт, никакой логики:
+```
+HomePage/
+  index.{js|ts}        # только: export { HomePage } from './HomePage'
+  HomePage.{ext}       # представление
 ```
 
-## Levels of Nesting and Functionality Layers
+### Одиночная сущность
 
-### Introduction to Layers and Levels
+Одиночной (атомарной) сущностью считается файл, который самодостаточно хранит один смысловой объект:
+код (класс, функцию, конфигурацию), данные, изображение, шрифт, видео и т.п.
 
-The concept of layer hierarchy in deep-tree architecture is similar to the logic of *namespace* in JS. Namespaces are
-used to organize code, prevent naming conflicts, and logically group code in software applications.
+#### Правила одиночной сущности
+- Внутри только один самостоятельный смысловой объект.
 
-In deep-tree architecture, the system organizes components or elements as a tree, where each element has access to its
-parent and its own child elements.
 
-### Levels
 
-Nesting levels have designations and are used to orient the nesting level of components.
 
-- **Root Level**
-- **First Depth Level**
-- **Second Depth Level**
-- **Third Depth Level and Beyond**
+## Базовые сущности
 
-### Functionality Layers
+Визуально любой макет делится на три уровня:
+- **Страницы (pages / views)**
+- **Секции (sections)**
+- **Компоненты (components)**
 
-Or functionality layers serve specific tasks at each level.
+### Страницы
 
-- **Component Layer**
-- **Section Layer**
-- **Utility Layer**
-- **Hook Layer**
-- **UI Component Layer**
-- etc.
+Страницы — крупные составные сущности, логически независимые части приложения. Каждая выполняет свою бизнес-роль и не повторяется.
 
-Example directory structure with level designations:
+#### Правила страниц
+- Всегда составная сущность с именем в PascalCase и суффиксом `{NAME}Page` (пример: `HomePage`).
+- Обязателен корневой `index`-файл; экспорт наружу — только через него.
+- Обязателен файл представления с именем папки (`HomePage.{ext}`).
+- Обычно без входных параметров (props / attrs).
+- Хранятся только в слое `pages`.
 
-```ts
-// JavaScript
-// Root Level component HomePage
-|-- index.ts
-|-- HomePage.tsx
-|-- HomePage.module.scss
-|-- components  
-|   |-- ArrowButton
-|   |   |-- ArrowButton.module.scss
-|   |   |-- ArrowButton.tsx
-|   |   |-- index.ts
-|-- sections  
-|   |-- BannerSection
-|   |   |-- sections  
-|   |   |   |-- SliderSection
-|   |   |   |   |-- components  
-|   |   |   |   |   |-- Slide
-|   |   |   |   |   |   |-- Slide.module.scss
-|   |   |   |   |   |   |-- Slide.tsx 
-|   |   |   |   |   |   |-- index.ts
-|   |   |   |   |-- SliderSection.module.scss
-|   |   |   |   |-- SliderSection.tsx
-|   |   |   |   |-- index.ts
-|   |   |   |-- ControlSection
-|   |   |       |-- ControlSection.module.scss
-|   |   |       |-- ControlSection.tsx
-|   |   |       |-- index.ts
-|-- utils  
-|   |-- createSomeThing.ts
-|   |-- convertSomeThing.ts
-|-- hooks 
-|   |-- useInitialSlider.ts
-|-- ui  
-|   |-- Hero
-|   |   |-- Hero.module.scss
-|   |   |-- Hero.tsx
-|   |   |-- index.ts
+> **Нюанс для фреймворков с файловым роутингом** (Next.js, Nuxt, SvelteKit, Astro):
+> слой `pages` может конфликтовать с системной папкой фреймворка.
+> В таком случае переименуйте слой в `views` или `screens`.
+
+#### Исключения
+- На страницу может приходить верхнеуровневый скоуп данных (локаль, feature-флаги, ключи интеграций), если это касается всего экрана.
+
+### Секции
+
+Секции — зависимые части родительского компонента, составные сущности; дробят его логику на понятные блоки.
+
+#### Правила секции
+- Всегда составная сущность с именем в PascalCase и суффиксом `{NAME}Sct` (пример: `HeroSct`).
+- Обязателен корневой `index`-файл; экспорт наружу — только через него.
+- Обязателен файл представления с именем папки.
+- Входные параметры не передаём — данные берёт из контекста или локальной логики.
+- Живёт только в слое `sections`; может содержать слои, кроме `pages`.
+- Рекомендация: не создавайте слой `sections` ради одной секции.
+
+#### Исключения
+- В редких случаях в секцию может попадать параметр, но это сигнал вынести повторяемые части в компоненты.
+
+### Компоненты
+
+Компоненты — переиспользуемые составные сущности, применимые в разных секциях и страницах.
+
+#### Правила компонентов
+- Всегда составная сущность с именем в PascalCase.
+- Обязателен корневой `index`-файл; экспорт наружу — только через него.
+- Обязателен файл представления с именем папки.
+- Хранятся только в слое `components`.
+- Могут содержать слои, кроме `pages`.
+
+### Рекомендация по именованию файлов
+
+Основной файл совпадает с именем сущности (`SomeComponent.{ext}`),
+вспомогательные файлы лежат рядом без префикса (`types`, `styles`, `index`),
+тесты и сторис повторяют имя сущности (`SomeComponent.test`, `SomeComponent.stories`).
+
+
+
+
+## Пример структуры проекта
+
+```
+src/
+  pages/                    # слой страниц
+    HomePage/               # сущность-страница
+      index.{js|ts}
+      HomePage.{ext}
+      context.{js|ts}       # одиночная сущность — доступна детям
+      styles.{css|scss}     # общие стили для детей
+      sections/             # слой секций
+        HeroSct/
+          index.{js|ts}
+          HeroSct.{ext}
+        FeaturesSct/
+          index.{js|ts}
+          FeaturesSct.{ext}
+          components/
+            FeatureCard/
+              index.{js|ts}
+              FeatureCard.{ext}
+      components/           # слой компонентов страницы
+        CallToAction/
+          index.{js|ts}
+          CallToAction.{ext}
+  components/               # глобальный слой компонентов
+    Button/
+      index.{js|ts}
+      Button.{ext}
+    Avatar/
+      index.{js|ts}
+      Avatar.{ext}
+  logic/                    # слой логики (хуки / composables / сигналы)
+    useViewport.{js|ts}
+  utils/                    # слой утилит
+    formatPrice.{js|ts}
+  styles/                   # слой стилей
+    globals.{css|scss}
 ```
 
-## Architectural Principles
 
-- The less code, the better
-- The simpler, the better
-- Code should be as readable and transparent as possible
-- The single responsibility principle should be observed
-- Similar problems should be solved in similar ways
-- Child components can use parent components
-- Problems are solved at their level or above
-- Divide and conquer (adhere to a modular approach)
 
-## Disadvantages
 
-### Code Duplicates
+## Слои
 
-With poor knowledge of the project and architecture, code duplicates may occur. In practice, code duplicates are
-minimal.
+Слой — это папка-пространство имён, в которой логически группируются сущности одного типа.
+Название папки и есть имя слоя: `components`, `logic`, `sections`, `pages` и т.п.
 
-### Deep Nesting
+### Правила слоёв
+- Имя слоя — camelCase.
+- Слой не вкладывается напрямую в слой: новый слой появляется только после сущности.
+- Слой может содержать группы.
+- Внутри только сущности своего типа.
+- `index`-файл может присутствовать, но не обязателен.
 
-It may be difficult to navigate the project directory due to deep nesting.
+### Примеры имён слоёв
+- `pages` / `views` / `screens`
+- `sections`
+- `components` / `ui`
+- `logic` / `hooks` / `composables`
+- `utils`
+- `types`
+- `api`
+- `styles`
+- `managers`
 
-# Extended Deep Tree
+> Названия слоёв для логики (`hooks`, `composables`, `logic`) выбираются в соответствии с терминологией фреймворка.
 
-Extended documentation including exact code examples and recommendations
 
-## Managers (Contexts)
 
-Managers are a functional layer that serve as nodes for passing logic between different levels and layers.
 
-Structurally, managers can be divided into two types: simple and complex
+## Файловые слои
+
+Файловый слой — файл, временно выполняющий роль слоя, когда кода мало и нет вложенных сущностей.
+Со временем разворачивается в полноценный слой-папку.
+
+### Когда можно
+- Вся логика слоя умещается в один файл.
+- Нет вложенных сущностей или групп.
+
+### Когда разворачивать
+- Появляется вторая сущность того же типа.
+- Файл становится неудобен для навигации или тестирования.
+
+### Примеры имён файловых слоёв
+- `types.{js|ts}`
+- `hooks.{js|ts}` / `composables.{js|ts}`
+- `utils.{js|ts}`
+- `constants.{js|ts}`
+- `context.{js|ts}`
+- `styles.{css|scss|module.scss}`
+
+### Правила
+- Имя файла совпадает с типом слоя; префиксы не нужны.
+- Не смешивать разные типы сущностей в одном файловом слое.
+- При разворачивании сохраняйте имя слоя.
+
+
+
+
+## Группы
+
+Группы — папки, объединяющие сущности одного типа по общему смыслу внутри слоя.
+Задача группы — разгружать слои при большом количестве сущностей.
+
+### Правила групп
+- Имя группы — camelCase.
+- Слои внутри группы не допускаются; группы могут вкладываться в группы.
+- Внутри только сущности типа слоя-родителя.
+- Группа не служит контейнером для одной-единственной сущности.
+- Имя группы не совпадает с именами слоёв.
+
+### Примеры
+```
+components(layer) → buttons(group) → Button(entity)          ✓
+components(layer) → buttons(group) → outlined(group) → Button ✓
+components(layer) → buttons(group) → useHook(entity)          ✗
+```
+
+
+
+
+## Шеринг сущностей (sharing)
+
+Дочерняя сущность может использовать слои, файловые слои и одиночные сущности всех своих предков вплоть до корня `src`.
+
+### Правило доступа
+- Импортировать можно только **вверх по своей ветке**.
+- Импорт из **соседней ветки** не допускается.
+- Файлы **представления** предка — не источник импорта для детей.
+
+Если нужно пробросить что-то вниз по дереву — выносите это в отдельную одиночную сущность или файловый слой рядом с представлением:
+
+| Что шарим | Как оформить |
+|-----------|--------------|
+| Контекст / состояние | `context.{js|ts}` — одиночная сущность |
+| Общие стили | `styles.{css|scss}` — файловый слой |
+
+### Когда поднимать сущность выше
+Если сущность нужна в двух и более ветках — переносите её в ближайший общий слой-предок.
+
+
+
+
+## Глубина вложенности
+
+Глубина вложений не ограничивается, если это локальный крупный функционал.
+Ориентир: углубляйтесь столько, сколько нужно для читаемости внутри контекста.
+Поднимать сущности выше имеет смысл только при реальном шаринге за пределами текущей ветки.
+
+
+
+
+## Менеджер
+
+Менеджер — составная независимая сущность: вынесенный провайдер состояния и логики, сфокусированный на одной конкретной задаче.
+
+Реализуется через механизм контекста / provide-inject фреймворка.
+
+### Правила менеджера
+- Всегда составная сущность с именем в PascalCase и суффиксом `{NAME}Mng` (пример: `ReportMng`).
+- Обязателен корневой `index`-файл; экспорт наружу — только через него.
+- Обязателен файл логики — хранит бизнес-логику и состояние (название зависит от фреймворка: `useController`, `controller`, `store` и т.п.).
+- Обязателен файл провайдера с именем папки.
+- Живёт только в слое `managers`.
+- Зачастую не принимает никаких параметров кроме дочерних элементов (`children` / `slots`).
+
+### Файловая структура
+```
+managers/
+  ReportMng/
+    index.{js|ts}         # реэкспорт
+    ReportMng.{ext}       # провайдер — оборачивает дерево, передаёт логику в контекст
+    useController.{js|ts} # логика и состояние (название адаптируйте под фреймворк)
+```
+
+### Когда использовать менеджер
+
+| Ситуация | Решение |
+|----------|---------|
+| Состояние нужно только в одном компоненте | Локальный стейт |
+| Нужно пробросить данные без drilling, логика простая | `context.{js|ts}` + accessor у родителя |
+| Есть бизнес-логика, несколько источников вызова | Менеджер |
+| Нужен UI над деревом (тосты, модалки, оверлеи) | Менеджер с собственным рендером |
+| Нужен time-travel, продвинутые devtools | Глобальный стейт-менеджер |
+
+> Один вариант менеджера — всегда составная сущность.
+> Если слишком просто для составной — это локальный стейт или `context.{js|ts}`, а не менеджер.
+
+### Компоненты внутри менеджера
+
+Если компонент рендерится **самим провайдером** — он принадлежит менеджеру.
+Если компонент используется **потребителями** снаружи — выносить в `components`.
+
+| Ситуация | Решение |
+|----------|---------|
+| UI рендерится провайдером, одно место вызова | Локальный контекст — менеджер избыточен |
+| UI рендерится провайдером, несколько мест вызова | Компонент внутри менеджера |
+| Компонент нужен потребителям извне | Вынести в слой `components` |
+
+
+
+
+## Типы данных
+
+Deep Tree рекомендует строгий подход к типизации там, где фреймворк/язык её поддерживает.
+
+При создании типа или интерфейса используется префикс `T` — для единообразия и читаемости.
+Например: `TProfile`, `TItem`, `TFeature`, `TTeamMember`.
+
+### Правила
+- Имя начинается с префикса `T` и пишется в PascalCase.
+- Правило применяется как к `type`, так и к `interface`.
