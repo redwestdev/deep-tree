@@ -1,0 +1,30 @@
+{
+  "name": "@redwestdev/react-deep-tree",
+  "version": "0.1.0",
+  "description": "Deep Tree — React.js implementation",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "bin": {
+    "deep-tree-react": "./bin/init.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.0"
+  }
+}

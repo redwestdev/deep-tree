@@ -1,162 +1,169 @@
-# Deep Tree Core
+# Deep Tree
 
-## Введение
+## Framework implementations
 
-Deep Tree — файловая модульная архитектура UI-приложений, ориентированная на масштабируемость больших фронтенд-проектов.
+| | |
+|--|--|
+| [React.js](packages/react/README.md) | React-specific rules, hooks, manager pattern, utilities |
+| [Vue.js](packages/vue/README.md) | Vue-specific rules, composables, manager pattern, utilities |
 
-Архитектура основана на принципах [SOLID](https://en.wikipedia.org/wiki/SOLID), адаптированных для организации файлов фронтенд-проектов. Не привязана к конкретному фреймворку — применима к любому компонентному UI-стеку.
+---
 
-> Эталонная реализация: [README.md](react.md) (React.js)
+## Introduction
 
-## Цели
+Deep Tree is a modular file architecture for UI applications, focused on scalability of large frontend projects.
 
-- Установить единую структуру файлов в проекте
-- Улучшить читаемость и навигацию по коду
-- Разбивать большие файлы на понятные части
-- Снизить технический долг проекта
-- Повысить гибкость и переиспользование кода
-- Снизить порог входа для новых разработчиков
+The architecture is based on [SOLID](https://en.wikipedia.org/wiki/SOLID) principles adapted for organizing frontend project files. It is not tied to any specific framework — applicable to any component-based UI stack.
+
+## Goals
+
+- Establish a unified file structure across the project
+- Improve code readability and navigation
+- Break large files into understandable parts
+- Reduce technical debt
+- Increase flexibility and code reuse
+- Lower the entry barrier for new developers
 
 
 
 
-## Сущности
+## Entities
 
-Сущность — это программная логическая единица.
+An entity is a software logical unit.
 
-### Зачем нужны сущности?
+### Why entities?
 
-Сущность — это кирпич архитектуры. Без атомарных единиц нет из чего строить. Каждый файл или папка имеет чёткий смысл, и ничего лишнего в одной единице не хранится.
+An entity is the building block of the architecture. Without atomic units there is nothing to build from. Every file or folder has a clear meaning, and nothing extra is stored in a single unit.
 
-Примеры видов сущностей:
-`component`, `style`, `image`, `logic`, `function`, `page`, `section`, `route`, `helper`, `config`, `type`, `api-client`, `translation` и тд.
+Example entity types:
+`component`, `style`, `image`, `logic`, `function`, `page`, `section`, `route`, `helper`, `config`, `type`, `api-client`, `translation`, etc.
 
-Сущность всегда отвечает за что-то одно. (принцип единой ответственности SOLID).
+An entity is always responsible for exactly one thing (Single Responsibility Principle from SOLID).
 
-> Некоторые сущности уникальны в одном экземпляре. Например: `config`, `theme`.
+> Some entities are unique in a single instance. For example: `config`, `theme`.
 
-В архитектуре глубокого дерева сущности упорядочиваются в виде дерева,
-где каждая сущность имеет доступ к родительским и управляет своими дочерними сущностями.
+In the Deep Tree architecture, entities are organized as a tree,
+where each entity has access to its ancestors and manages its own child entities.
 
-Любая сущность может быть как _отдельным файлом_, так и _группой файлов, объединённых папкой_.
+Any entity can be either a _single file_ or a _group of files combined in a folder_.
 
-### Составная сущность
+### Composite entity
 
-Составная сущность — группа файлов, объединённых общей папкой. Внутри могут быть слои, файловые слои и любые вспомогательные файлы, необходимые для работы.
+A composite entity is a group of files combined in a shared folder. It may contain layers, file layers, and any supporting files needed for operation.
 
-#### Зачем нужна составная сущность?
+#### Why composite entities?
 
-Составная сущность и её `index`-файл решают проблему закрытости. Одиночный файл в любой момент можно превратить в папку с несколькими файлами — и внешний путь импорта не изменится. Снаружи никто не знает о внутреннем устройстве: это защита от случайного вмешательства в детали реализации.
+A composite entity and its `index` file solve the encapsulation problem. A single file can be turned into a folder with multiple files at any time — and the external import path stays the same. No one outside knows about the internal structure: this protects against accidental interference with implementation details.
 
-#### Правила составной сущности
-- Имя папки — PascalCase.
-- Обязателен корневой `index`-файл; экспорт наружу — только через него.
-- Не вкладывать другие составные сущности того же уровня (только слои, файловые слои и одиночные сущности).
-- Структура внутри папки самодостаточна.
+#### Composite entity rules
+- Folder name — PascalCase.
+- A root `index` file is required; exports to the outside only through it.
+- Do not nest other composite entities of the same level (only layers, file layers, and single entities).
+- The internal structure is self-contained.
 
-`index`-файл — только реэкспорт, никакой логики:
+`index` file — re-export only, no logic:
 ```
 HomePage/
-  index.{js|ts}        # только: export { HomePage } from './HomePage'
-  HomePage.{ext}       # представление
+  index.{js|ts}        # only: export { HomePage } from './HomePage'
+  HomePage.{ext}       # view
 ```
 
-### Одиночная сущность
+### Single entity
 
-Одиночной (атомарной) сущностью считается файл, который самодостаточно хранит один смысловой объект:
-код (класс, функцию, конфигурацию), данные, изображение, шрифт, видео и т.п.
+A single (atomic) entity is a file that independently stores one semantic object:
+code (class, function, configuration), data, image, font, video, etc.
 
-#### Правила одиночной сущности
-- Внутри только один самостоятельный смысловой объект.
-
-
-
-
-## Базовые сущности
-
-Визуально любой макет делится на три уровня:
-- **Страницы (pages / views)**
-- **Секции (sections)**
-- **Компоненты (components)**
-
-### Страницы
-
-Страницы — крупные составные сущности, логически независимые части приложения. Каждая выполняет свою бизнес-роль и не повторяется.
-
-#### Зачем нужны страницы?
-
-Страницы делят приложение на крупные независимые куски. Каждая страница — отдельный контекст с понятной бизнес-ролью. Это не даёт приложению превратиться в монолит, где всё перемешано.
-
-#### Правила страниц
-- Всегда составная сущность с именем в PascalCase и суффиксом `{NAME}Page` (пример: `HomePage`).
-- Обязателен корневой `index`-файл; экспорт наружу — только через него.
-- Обязателен файл представления с именем папки (`HomePage.{ext}`).
-- Обычно без входных параметров (props / attrs).
-- Хранятся только в слое `pages`.
-
-> **Нюанс для фреймворков с файловым роутингом** (Next.js, Nuxt, SvelteKit, Astro):
-> слой `pages` может конфликтовать с системной папкой фреймворка.
-> В таком случае переименуйте слой в `views` или `screens`.
-
-#### Исключения
-- На страницу может приходить верхнеуровневый скоуп данных (локаль, feature-флаги, ключи интеграций), если это касается всего экрана.
-
-### Секции
-
-Секции — зависимые части родительского компонента, составные сущности; дробят его логику на понятные блоки.
-
-#### Зачем нужны секции?
-
-Секции спасают от раздутых компонентов. Без них вся логика страницы или крупного компонента оседает в одном файле. Секция забирает часть этой логики в свою папку — родительский компонент остаётся читаемым, а каждый блок разбирается отдельно.
-
-> На секции всегда можно поделить любой другой компонент. Page, view, screens, section, component и тд могут иметь секции!
-
-#### Правила секции
-- Всегда составная сущность с именем в PascalCase и суффиксом `{NAME}Sct` (пример: `HeroSct`).
-- Обязателен корневой `index`-файл; экспорт наружу — только через него.
-- Обязателен файл представления с именем папки.
-- Входные параметры не передаём — данные берёт из контекста или локальной логики.
-- Живёт только в слое `sections`; может содержать слои, кроме `pages`.
-- Рекомендация: не создавайте слой `sections` ради одной секции.
-
-#### Исключения
-- В редких случаях в секцию может попадать параметр, но это сигнал вынести повторяемые части в компоненты.
-
-### Компоненты
-
-Компоненты — переиспользуемые составные сущности, применимые в разных секциях и страницах.
-
-#### Зачем нужны компоненты?
-
-Компоненты — это то, что повторяется. Кнопка, карточка, аватар — одно и то же в разных местах. В отличие от секции, компонент не привязан к конкретному родителю: его задача именно в повторении и переиспользовании.
-
-#### Правила компонентов
-- Всегда составная сущность с именем в PascalCase.
-- Обязателен корневой `index`-файл; экспорт наружу — только через него.
-- Обязателен файл представления с именем папки.
-- Хранятся только в слое `components`.
-- Могут содержать слои, кроме `pages`.
-
-### Рекомендация по именованию файлов
-
-Основной файл совпадает с именем сущности (`SomeComponent.{ext}`),
-вспомогательные файлы лежат рядом без префикса (`types`, `styles`, `index`),
-тесты и сторис повторяют имя сущности (`SomeComponent.test`, `SomeComponent.stories`).
+#### Single entity rules
+- Contains only one independent semantic object.
 
 
 
 
-## Пример структуры проекта
+## Core Entities
+
+Visually, any layout can be divided into three levels:
+- **Pages (pages / views)**
+- **Sections (sections)**
+- **Components (components)**
+
+### Pages
+
+Pages are large composite entities — logically independent parts of the application. Each fulfills its own business role and is not repeated.
+
+#### Why pages?
+
+Pages divide the application into large independent chunks. Each page is a separate context with a clear business role. This prevents the application from becoming a monolith where everything is mixed together.
+
+#### Page rules
+- Always a composite entity with a PascalCase name and the `{NAME}Page` suffix (e.g., `HomePage`).
+- A root `index` file is required; exports to the outside only through it.
+- A view file named after the folder is required (`HomePage.{ext}`).
+- Usually no input parameters (props / attrs).
+- Stored only in the `pages` layer.
+
+> **Note for file-based routing frameworks** (Next.js, Nuxt, SvelteKit, Astro):
+> the `pages` layer may conflict with the framework's system folder.
+> In that case, rename the layer to `views` or `screens`.
+
+#### Exceptions
+- A page may receive top-level scope data (locale, feature flags, integration keys) if it affects the entire screen.
+
+### Sections
+
+Sections are dependent parts of a parent component — composite entities that break its logic into understandable blocks.
+
+#### Why sections?
+
+Sections save components from bloat. Without them, all the logic of a page or large component piles up in one file. A section takes part of that logic into its own folder — the parent component stays readable, and each block is handled separately.
+
+> Any component can always be split into sections. Pages, views, screens, sections, components, etc. can all have sections!
+
+#### Section rules
+- Always a composite entity with a PascalCase name and the `{NAME}Sct` suffix (e.g., `HeroSct`).
+- A root `index` file is required; exports to the outside only through it.
+- A view file named after the folder is required.
+- No input parameters — data comes from context or local logic.
+- Lives only in the `sections` layer; may contain layers except `pages`.
+- Recommendation: do not create a `sections` layer for a single section.
+
+#### Exceptions
+- In rare cases a section may receive a parameter, but this signals that the reusable parts should be moved to components.
+
+### Components
+
+Components are reusable composite entities, applicable across different sections and pages.
+
+#### Why components?
+
+Components are what repeats. A button, a card, an avatar — the same thing in different places. Unlike a section, a component is not tied to a specific parent: its purpose is exactly repetition and reuse.
+
+#### Component rules
+- Always a composite entity with a PascalCase name.
+- A root `index` file is required; exports to the outside only through it.
+- A view file named after the folder is required.
+- Stored only in the `components` layer.
+- May contain layers except `pages`.
+
+### File naming recommendation
+
+The main file matches the entity name (`SomeComponent.{ext}`),
+supporting files are placed alongside without a prefix (`types`, `styles`, `index`),
+tests and stories repeat the entity name (`SomeComponent.test`, `SomeComponent.stories`).
+
+
+
+
+## Project Structure Example
 
 ```
 src/
-  pages/                    # слой страниц
-    HomePage/               # сущность-страница
+  pages/                    # pages layer
+    HomePage/               # page entity
       index.{js|ts}
       HomePage.{ext}
-      context.{js|ts}       # одиночная сущность — доступна детям
-      styles.{css|scss}     # общие стили для детей
-      sections/             # слой секций
+      context.{js|ts}       # single entity — accessible to children
+      styles.{css|scss}     # shared styles for children
+      sections/             # sections layer
         HeroSct/
           index.{js|ts}
           HeroSct.{ext}
@@ -167,45 +174,45 @@ src/
             FeatureCard/
               index.{js|ts}
               FeatureCard.{ext}
-      components/           # слой компонентов страницы
+      components/           # page components layer
         CallToAction/
           index.{js|ts}
           CallToAction.{ext}
-  components/               # глобальный слой компонентов
+  components/               # global components layer
     Button/
       index.{js|ts}
       Button.{ext}
     Avatar/
       index.{js|ts}
       Avatar.{ext}
-  logic/                    # слой логики (хуки / composables / сигналы)
+  logic/                    # logic layer (hooks / composables / signals)
     useViewport.{js|ts}
-  utils/                    # слой утилит
+  utils/                    # utilities layer
     formatPrice.{js|ts}
-  styles/                   # слой стилей
+  styles/                   # styles layer
     globals.{css|scss}
 ```
 
 
 
 
-## Слои
+## Layers
 
-Слой — это папка-пространство имён, в которой логически группируются сущности одного типа.
-Название папки и есть имя слоя: `components`, `logic`, `sections`, `pages` и т.п.
+A layer is a folder-namespace in which entities of one type are logically grouped.
+The folder name is the layer name: `components`, `logic`, `sections`, `pages`, etc.
 
-### Зачем нужны слои?
+### Why layers?
 
-Слои создают рамки и контекст разработки. Зашёл в `hooks` — там хуки и правила работы с ними. Зашёл в `managers` — там менеджеры со своей логикой. Слой сигнализирует, что здесь можно ожидать, и не даёт разным типам сущностей перемешиваться в одном месте.
+Layers create boundaries and development context. Go into `hooks` — hooks and their rules are there. Go into `managers` — managers with their own logic. A layer signals what to expect and prevents different entity types from mixing in one place.
 
-### Правила слоёв
-- Имя слоя — camelCase.
-- Слой не вкладывается напрямую в слой: новый слой появляется только после сущности.
-- Слой может содержать группы.
-- Внутри только сущности своего типа.
-- `index`-файл может присутствовать, но не обязателен.
+### Layer rules
+- Layer name — camelCase.
+- A layer is not nested directly in another layer: a new layer appears only after an entity.
+- A layer may contain groups.
+- Contains only entities of its own type.
+- An `index` file may be present but is not required.
 
-### Примеры имён слоёв
+### Example layer names
 - `pages` / `views` / `screens`
 - `sections`
 - `components` / `ui`
@@ -216,25 +223,25 @@ src/
 - `styles`
 - `managers`
 
-> Названия слоёв для логики (`hooks`, `composables`, `logic`) выбираются в соответствии с терминологией фреймворка.
+> Logic layer names (`hooks`, `composables`, `logic`) are chosen according to the framework's terminology.
 
 
 
 
-## Файловые слои
+## File Layers
 
-Файловый слой — файл, временно выполняющий роль слоя, когда кода мало и нет вложенных сущностей.
-Со временем разворачивается в полноценный слой-папку.
+A file layer is a file that temporarily acts as a layer when there is little code and no nested entities.
+Over time it expands into a full folder layer.
 
-### Когда можно
-- Вся логика слоя умещается в один файл.
-- Нет вложенных сущностей или групп.
+### When it's acceptable
+- All layer logic fits in a single file.
+- No nested entities or groups.
 
-### Когда разворачивать
-- Появляется вторая сущность того же типа.
-- Файл становится неудобен для навигации или тестирования.
+### When to expand
+- A second entity of the same type appears.
+- The file becomes inconvenient for navigation or testing.
 
-### Примеры имён файловых слоёв
+### Example file layer names
 - `types.{js|ts}`
 - `hooks.{js|ts}` / `composables.{js|ts}`
 - `utils.{js|ts}`
@@ -242,31 +249,31 @@ src/
 - `context.{js|ts}`
 - `styles.{css|scss|module.scss}`
 
-### Правила
-- Имя файла совпадает с типом слоя; префиксы не нужны.
-- Не смешивать разные типы сущностей в одном файловом слое.
-- При разворачивании сохраняйте имя слоя.
+### Rules
+- The file name matches the layer type; no prefixes needed.
+- Do not mix different entity types in one file layer.
+- When expanding, preserve the layer name.
 
 
 
 
-## Группы
+## Groups
 
-Группы — папки, объединяющие сущности одного типа по общему смыслу внутри слоя.
-Задача группы — разгружать слои при большом количестве сущностей.
+Groups are folders that combine entities of one type by common meaning within a layer.
+The purpose of a group is to unload layers when the number of entities grows.
 
-### Зачем нужны группы?
+### Why groups?
 
-При масштабировании слои разрастаются и превращаются в свалку. Группы наводят порядок внутри слоя — без изменения структуры самого дерева. Это защита от хаоса на уровне одного слоя при большом количестве сущностей.
+As the project scales, layers grow and turn into a mess. Groups bring order within a layer — without changing the tree structure itself. This is protection against chaos at the layer level when there are many entities.
 
-### Правила групп
-- Имя группы — camelCase.
-- Слои внутри группы не допускаются; группы могут вкладываться в группы.
-- Внутри только сущности типа слоя-родителя.
-- Группа не служит контейнером для одной-единственной сущности.
-- Имя группы не совпадает с именами слоёв.
+### Group rules
+- Group name — camelCase.
+- Layers inside a group are not allowed; groups may be nested within groups.
+- Contains only entities of the parent layer type.
+- A group does not serve as a container for a single entity.
+- Group name must not match any layer name.
 
-### Примеры
+### Examples
 ```
 components(layer) → buttons(group) → Button(entity)          ✓
 components(layer) → buttons(group) → outlined(group) → Button ✓
@@ -276,102 +283,102 @@ components(layer) → buttons(group) → useHook(entity)          ✗
 
 
 
-## Шеринг сущностей (sharing)
+## Entity Sharing
 
-Дочерняя сущность может использовать слои, файловые слои и одиночные сущности всех своих предков вплоть до корня `src`.
+A child entity may use layers, file layers, and single entities from all of its ancestors up to the `src` root.
 
-### Зачем нужен шеринг?
+### Why sharing?
 
-Шеринг — это постоянный живой процесс в проекте, а не разовое решение. Он решает проблему веса кода: чем выше сущность в дереве, тем больше у неё зависимостей и ответственности; чем ниже — тем она локальнее. Появилась задача, увидели что компонент начал повторяться в разных местах — подняли его выше в ближайший общий предок. Это и есть шеринг.
+Sharing is a constant living process in a project, not a one-time decision. It solves the problem of code weight: the higher an entity is in the tree, the more dependencies and responsibility it has; the lower — the more local it is. When a component starts repeating in different places, move it up to the nearest common ancestor. That is sharing.
 
-### Правило доступа
-- Импортировать можно только **вверх по своей ветке**.
-- Импорт из **соседней ветки** не допускается.
-- Файлы **представления** предка — не источник импорта для детей.
+### Access rule
+- Imports are only allowed **up your own branch**.
+- Imports from a **sibling branch** are not allowed.
+- **View files** of an ancestor are not an import source for children.
 
-Если нужно пробросить что-то вниз по дереву — выносите это в отдельную одиночную сущность или файловый слой рядом с представлением:
+To pass something down the tree — extract it into a separate single entity or file layer next to the view:
 
-| Что шарим | Как оформить |
-|-----------|--------------|
-| Контекст / состояние | `context.{js|ts}` — одиночная сущность |
-| Общие стили | `styles.{css|scss}` — файловый слой |
+| What to share | How to organize |
+|---------------|-----------------|
+| Context / state | `context.{js|ts}` — single entity |
+| Shared styles | `styles.{css|scss}` — file layer |
 
-### Когда поднимать сущность выше
-Если сущность нужна в двух и более ветках — переносите её в ближайший общий слой-предок.
-
-
-
-
-## Глубина вложенности
-
-Глубина вложений не ограничивается, если это локальный крупный функционал.
-
-### Зачем нужна глубина вложенности?
-
-Глубина решает проблему фокуса. Чем глубже работаешь — тем меньше кода вокруг затрагиваешь, тем точнее и локальнее изменение. Спустился в нужное место, поправил только там, где нужно, и пошёл дальше. Поднимать сущности выше — только когда они реально нужны в нескольких местах, а не "на всякий случай".
-Ориентир: углубляйтесь столько, сколько нужно для читаемости внутри контекста.
-Поднимать сущности выше имеет смысл только при реальном шаринге за пределами текущей ветки.
+### When to move an entity up
+If an entity is needed in two or more branches — move it to the nearest common ancestor layer.
 
 
 
 
-## Менеджер
+## Nesting Depth
 
-Менеджер — составная независимая сущность: вынесенный провайдер состояния и логики, сфокусированный на одной конкретной задаче.
+Nesting depth is not limited if it is local, large-scale functionality.
 
-Реализуется через механизм контекста / provide-inject фреймворка.
+### Why nesting depth?
 
-### Правила менеджера
-- Всегда составная сущность с именем в PascalCase и суффиксом `{NAME}Mng` (пример: `ReportMng`).
-- Обязателен корневой `index`-файл; экспорт наружу — только через него.
-- Обязателен файл логики — хранит бизнес-логику и состояние (название зависит от фреймворка: `useController`, `controller`, `store` и т.п.).
-- Обязателен файл провайдера с именем папки.
-- Живёт только в слое `managers`.
-- Зачастую не принимает никаких параметров кроме дочерних элементов (`children` / `slots`).
+Depth solves the focus problem. The deeper you work — the less surrounding code you affect, the more precise and local the change. Go down to the right place, fix only what needs fixing, and move on. Move entities up only when they are genuinely needed in multiple places, not "just in case".
+Guideline: go as deep as needed for readability within the context.
+Moving entities up only makes sense when there is real sharing outside the current branch.
 
-### Файловая структура
+
+
+
+## Manager
+
+A manager is an independent composite entity: an extracted state and logic provider, focused on one specific task.
+
+Implemented via the framework's context / provide-inject mechanism.
+
+### Manager rules
+- Always a composite entity with a PascalCase name and the `{NAME}Mng` suffix (e.g., `ReportMng`).
+- A root `index` file is required; exports to the outside only through it.
+- A logic file is required — stores business logic and state (name depends on the framework: `useController`, `controller`, `store`, etc.).
+- A provider file named after the folder is required.
+- Lives only in the `managers` layer.
+- Usually accepts no parameters other than child elements (`children` / `slots`).
+
+### File structure
 ```
 managers/
   ReportMng/
-    index.{js|ts}         # реэкспорт
-    ReportMng.{ext}       # провайдер — оборачивает дерево, передаёт логику в контекст
-    useController.{js|ts} # логика и состояние (название адаптируйте под фреймворк)
+    index.{js|ts}         # re-export
+    ReportMng.{ext}       # provider — wraps the tree, passes logic into context
+    useController.{js|ts} # logic and state (adapt the name to the framework)
 ```
 
-### Когда использовать менеджер
+### When to use a manager
 
-| Ситуация | Решение |
-|----------|---------|
-| Состояние нужно только в одном компоненте | Локальный стейт |
-| Нужно пробросить данные без drilling, логика простая | `context.{js|ts}` + accessor у родителя |
-| Есть бизнес-логика, несколько источников вызова | Менеджер |
-| Нужен UI над деревом (тосты, модалки, оверлеи) | Менеджер с собственным рендером |
-| Нужен time-travel, продвинутые devtools | Глобальный стейт-менеджер |
+| Situation | Solution |
+|-----------|----------|
+| State needed in only one component | Local state |
+| Need to pass data without drilling, simple logic | `context.{js|ts}` + accessor at parent |
+| Business logic, multiple call sites | Manager |
+| Need UI above the tree (toasts, modals, overlays) | Manager with own render |
+| Need time-travel, advanced devtools | Global state manager |
 
-> Один вариант менеджера — всегда составная сущность.
-> Если слишком просто для составной — это локальный стейт или `context.{js|ts}`, а не менеджер.
+> One form of manager — always a composite entity.
+> If too simple for a composite — it's local state or `context.{js|ts}`, not a manager.
 
-### Компоненты внутри менеджера
+### Components inside a manager
 
-Если компонент рендерится **самим провайдером** — он принадлежит менеджеру.
-Если компонент используется **потребителями** снаружи — выносить в `components`.
+If a component is rendered **by the provider itself** — it belongs to the manager.
+If a component is used **by external consumers** — move it to `components`.
 
-| Ситуация | Решение |
-|----------|---------|
-| UI рендерится провайдером, одно место вызова | Локальный контекст — менеджер избыточен |
-| UI рендерится провайдером, несколько мест вызова | Компонент внутри менеджера |
-| Компонент нужен потребителям извне | Вынести в слой `components` |
-
-
+| Situation | Solution |
+|-----------|----------|
+| UI rendered by provider, one call site | Local context — manager is overkill |
+| UI rendered by provider, multiple call sites | Component inside the manager |
+| Component needed by external consumers | Move to `components` layer |
 
 
-## Типы данных
 
-Deep Tree рекомендует строгий подход к типизации там, где фреймворк/язык её поддерживает.
 
-При создании типа или интерфейса используется префикс `T` — для единообразия и читаемости.
-Например: `TProfile`, `TItem`, `TFeature`, `TTeamMember`.
+## Data Types
 
-### Правила
-- Имя начинается с префикса `T` и пишется в PascalCase.
-- Правило применяется как к `type`, так и к `interface`.
+Deep Tree recommends a strict approach to typing where the framework/language supports it.
+
+When creating a type or interface, use the `T` prefix — for consistency and readability.
+Examples: `TProfile`, `TItem`, `TFeature`, `TTeamMember`.
+
+### Rules
+- Name starts with the `T` prefix and is written in PascalCase.
+- The rule applies to both `type` and `interface`.
