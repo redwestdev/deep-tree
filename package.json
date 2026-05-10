@@ -5,7 +5,32 @@
   "description": "Deep Tree — monorepo",
   "scripts": {
     "build": "pnpm -r build",
-    "publish:all": "pnpm -r publish --access public"
+    "test": "pnpm -r test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "publish:all": "pnpm -r publish --access public",
+    "prepare": "husky",
+    "deep-tree:init": "deep-tree-react"
   },
-  "devDependencies": {}
+  "engines": {
+    "npm": "please-use-pnpm",
+    "pnpm": ">=9"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  },
+  "devDependencies": {
+    "@eslint/compat": "^1.0.0",
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-unused-imports": "^4.0.0",
+    "globals": "^15.0.0",
+    "husky": "^9.0.0",
+    "prettier": "^3.0.0",
+    "typescript-eslint": "^8.0.0"
+  }
 }

@@ -4,17 +4,23 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Skip when running inside the package's own repo (development mode)
+if (!__dirname.includes('node_modules')) process.exit(0);
+
 const src = join(__dirname, '..', 'README.md');
 const projectRoot = process.env.INIT_CWD ?? process.cwd();
 
 // Copy ARCHITECTURE.md
 const dest = join(projectRoot, 'ARCHITECTURE.md');
 if (existsSync(dest)) {
-  console.log('Deep Tree: ARCHITECTURE.md already exists, skipping.');
+  console.info('Deep Tree: ARCHITECTURE.md already exists, skipping.');
 } else {
   copyFileSync(src, dest);
-  console.log('Deep Tree: ARCHITECTURE.md copied to project root.');
-  console.log('  → Add it to your AI assistant context (Cursor, Copilot, Claude Code, etc.)');
+  console.info('Deep Tree: ARCHITECTURE.md copied to project root.');
+  console.info(
+    '  → Add it to your AI assistant context (Cursor, Copilot, Claude Code, etc.)'
+  );
 }
 
 // Inject init script into user's package.json
@@ -25,6 +31,6 @@ if (existsSync(pkgPath)) {
     pkg.scripts = pkg.scripts ?? {};
     pkg.scripts['deep-tree:init'] = 'deep-tree-react';
     writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
-    console.log('Deep Tree: added "deep-tree:init" to package.json scripts.');
+    console.info('Deep Tree: added "deep-tree:init" to package.json scripts.');
   }
 }

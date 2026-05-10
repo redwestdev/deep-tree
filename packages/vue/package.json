@@ -5,10 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "@redwestdev/deep-tree-core": "workspace:*"
-  },
-  "peerDependencies": {
+"peerDependencies": {
     "vue": ">=3.0.0"
   }
 }

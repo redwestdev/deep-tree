@@ -1,10 +1,11 @@
 import { type ReactNode } from 'react';
+
 import { createSafeContext } from './createSafeContext.js';
 
 export function createManager<T>(
   useController: () => T,
   renderOwn?: (value: T) => ReactNode,
-  displayName?: string,
+  displayName?: string
 ) {
   const [Context, useCtx] = createSafeContext<T>(displayName ?? 'Manager');
 

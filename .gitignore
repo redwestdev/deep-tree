@@ -1,20 +1,35 @@
-### react template
-.DS_*
+# Dependencies
+node_modules
+
+# Build output
+dist
+build
+
+# Logs
 *.log
 logs
-**/*.backup.*
-**/*.back.*
+
+# OS
+.DS_Store
+.DS_*
+
+# IDE
 .idea
 .vscode
-/.claude/
-
-node_modules
-bower_components
-
 *.sublime*
 
+# Backup files
+**/*.backup.*
+**/*.back.*
+
+# Lock files (pnpm is the source of truth)
+package-lock.json
+yarn.lock
+
+# Claude
+/.claude/
+
+# Misc
 psd
 thumb
 sketch
-
-

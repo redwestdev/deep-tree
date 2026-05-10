@@ -16,6 +16,8 @@
   ],
   "scripts": {
     "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "postinstall": "node scripts/postinstall.js"
   },
   "bin": {
@@ -26,5 +28,14 @@
   },
   "peerDependencies": {
     "react": ">=17.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.0.0",
+    "@types/react": "^18.0.0",
+    "jsdom": "^25.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0"
   }
 }

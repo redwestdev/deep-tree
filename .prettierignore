@@ -1,0 +1,17 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+build
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Generated / binary
+*.log
+
+# Markdown (avoid reformatting docs)
+**/*.md
