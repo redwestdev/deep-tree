@@ -26,6 +26,12 @@
     "deep-tree-react": "./bin/init.js"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/redwestdev/deep-tree",
+    "directory": "packages/react"
+  },
+  "homepage": "https://github.com/redwestdev/deep-tree/tree/main/packages/react#readme",
   "publishConfig": {
     "access": "public"
   },
