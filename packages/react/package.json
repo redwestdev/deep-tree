@@ -17,7 +17,9 @@
     "scripts"
   ],
   "scripts": {
+    "prebuild": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "build": "tsc",
+    "prepublishOnly": "pnpm build",
     "test": "vitest run",
     "test:watch": "vitest",
     "postinstall": "node scripts/postinstall.js"
