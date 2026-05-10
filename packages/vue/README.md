@@ -4,7 +4,7 @@
 
 Deep Tree is a modular file architecture for Vue.js applications, focused on scalability of large frontend projects.
 
-> Abstract specification: [Deep Tree Core](../core/README.md)
+> Abstract specification: [Deep Tree Core](https://github.com/redwestdev/deep-tree/blob/main/packages/core/README.md)
 
 This document describes Vue-specific rules and examples on top of the core.
 All base concepts (entities, layers, groups, sharing) are described in core.
@@ -347,4 +347,3 @@ type TProfile = {
 };
 ```
 
-> Full typing rules: [Deep Tree Core](../core/README.md#data-types)

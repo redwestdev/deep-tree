@@ -1,7 +1,14 @@
 {
   "name": "@redwestdev/deep-tree-vue",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Deep Tree — Vue.js implementation",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/redwestdev/deep-tree",
+    "directory": "packages/vue"
+  },
+  "homepage": "https://github.com/redwestdev/deep-tree/tree/main/packages/vue#readme",
   "publishConfig": {
     "access": "public"
   },

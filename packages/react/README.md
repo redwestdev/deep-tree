@@ -33,7 +33,7 @@ Copies `ARCHITECTURE.md` to your project root. Safe to re-run — skips if the f
 
 Deep Tree is a modular file architecture for React.js applications, focused on scalability of large frontend projects.
 
-> Abstract specification: [Deep Tree Core](../core/README.md)
+> Abstract specification: [Deep Tree Core](https://github.com/redwestdev/deep-tree/blob/main/README.md)
 
 This document describes React-specific rules and examples on top of the core.
 All base concepts (entities, layers, groups, sharing) are described in core.
@@ -344,5 +344,3 @@ type TProfile = {
   avatar: string;
 };
 ```
-
-> Full typing rules: [Deep Tree Core](../core/README.md#data-types)
