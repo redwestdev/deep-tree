@@ -297,27 +297,9 @@ export function ReportMng({ children }: { children: ReactNode }) {
 Creates a context and a safe access hook in one line.
 
 ```ts
-// utils/createSafeContext.ts
-import { createContext, useContext } from 'react';
-
-export function createSafeContext<T>(displayName: string) {
-  const Context = createContext<T | null>(null);
-  Context.displayName = displayName;
-
-  function useCtx(): T {
-    const value = useContext(Context);
-    if (!value) throw new Error(`${displayName}: no provider`);
-    return value;
-  }
-
-  return [Context, useCtx] as const;
-}
-```
-
-Usage:
-
-```ts
 // HomePage/context.ts
+import { createSafeContext } from '@redwestdev/react-deep-tree';
+
 export const [HomeContext, useHomeContext] = createSafeContext<THomeContext>('HomeContext');
 ```
 
@@ -325,42 +307,20 @@ export const [HomeContext, useHomeContext] = createSafeContext<THomeContext>('Ho
 
 Creates a manager provider and access hook — all boilerplate disappears.
 
-```tsx
-// utils/createManager.tsx
-import { ReactNode } from 'react';
-import { createSafeContext } from './createSafeContext';
-
-export function createManager<T>(
-  useController: () => T,
-  renderOwn?: (value: T) => ReactNode,
-  displayName?: string,
-) {
-  const [Context, useCtx] = createSafeContext<T>(displayName ?? 'Manager');
-
-  function Provider({ children }: { children: ReactNode }) {
-    const value = useController();
-    return (
-      <Context.Provider value={value}>
-        {children}
-        {renderOwn?.(value)}
-      </Context.Provider>
-    );
-  }
-
-  return [Provider, useCtx] as const;
-}
-```
-
 Simple manager:
 
 ```tsx
 // ReportMng/ReportMng.tsx
+import { createManager } from '@redwestdev/react-deep-tree';
+
 export const [ReportMng, useReportMng] = createManager(useController, undefined, 'ReportMng');
 ```
 
 Manager with its own UI:
 
 ```tsx
+import { createManager } from '@redwestdev/react-deep-tree';
+
 export const [ReportMng, useReportMng] = createManager(
   useController,
   (ctrl) => ctrl.isOpen && <ReportModal />,
