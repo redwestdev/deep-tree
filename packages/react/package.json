@@ -12,7 +12,9 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "bin",
+    "scripts"
   ],
   "scripts": {
     "build": "tsc",
@@ -23,6 +25,7 @@
   "bin": {
     "deep-tree-react": "./bin/init.js"
   },
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   },

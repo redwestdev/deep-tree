@@ -3,9 +3,9 @@
 ## Installation
 
 ```bash
-npm install @redwestdev/deep-tree-react
+npm install @redwestdev/react-deep-tree
 # or
-pnpm add @redwestdev/deep-tree-react
+pnpm add @redwestdev/react-deep-tree
 ```
 
 After installation, two things happen automatically:

@@ -6,7 +6,7 @@ export function createSafeContext<T>(displayName: string) {
 
   function useCtx(): T {
     const value = useContext(Context);
-    if (!value) throw new Error(`${displayName}: no provider`);
+    if (value === null) throw new Error(`${displayName}: no provider`);
     return value;
   }
 
