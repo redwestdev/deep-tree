@@ -117,6 +117,8 @@ Sections save you from bloated components. Without them, all the logic of a page
 - A view file named after the folder is required.
 - Input parameters are not passed — data is taken from context or local logic.
 - Lives only in the `sections` layer; may contain layers except `pages`.
+- A section may be imported and rendered only by the view file of its direct parent entity.
+- Child entities, hooks, sibling sections, ancestor components, and external entities must not import a section.
 - Recommendation: do not create a `sections` layer for one section.
 
 #### Exceptions

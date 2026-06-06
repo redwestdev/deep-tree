@@ -131,6 +131,8 @@ Sections save you from bloated components. Without them, all the logic of a page
 - A view file `${DIR_NAME}.vue` is required.
 - Props are not passed.
 - Lives only in the `sections` layer; may contain layers except `pages`.
+- A section may be imported and rendered only by the `.vue` view file of its direct parent entity.
+- Child components, composables, sibling sections, ancestor components, and external entities must not import a section.
 - Recommendation: do not create a `sections` layer for one section.
 
 A section does not accept props — it gets data from `inject` or a local composable:
