@@ -9,8 +9,11 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "publish:all": "pnpm -r publish --access public",
+    "publish:react": "pnpm --filter @redwestdev/react-deep-tree publish --access public",
+    "build:react": "pnpm --filter @redwestdev/react-deep-tree build",
     "version:all": "changeset version",
     "release": "pnpm build && changeset version && pnpm publish:all",
+    "release:react": "pnpm build:react && pnpm publish:react",
     "prepare": "husky",
     "deep-tree:init": "deep-tree-react"
   },

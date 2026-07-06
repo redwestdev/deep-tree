@@ -1,6 +1,6 @@
 {
   "name": "@redwestdev/react-deep-tree",
-  "version": "0.1.4",
+  "version": "0.2.1",
   "description": "Deep Tree — React.js implementation",
   "type": "module",
   "main": "./dist/index.js",
