@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // Skip when running inside the package's own repo (development mode)
 if (!__dirname.includes('node_modules')) process.exit(0);
 
-const src = join(__dirname, '..', 'README.md');
+const src = join(__dirname, '..', 'ARCHITECTURE.md');
 const projectRoot = process.env.INIT_CWD ?? process.cwd();
 
 // Copy ARCHITECTURE.md
